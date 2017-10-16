@@ -16,13 +16,17 @@ def compute_gradient(y, tx, w):
     
     return grad
 
-def split_data(x, y, batch_size, seed=1):
-    
+def split_data(x, y, ratio, seed=1):
     np.random.seed(seed)
     indices = list(range(len(y)))
     np.random.shuffle(indices)
     
-    return x[indices[:batch_size]],y[indices[:batch_size]]
+    indices_train = indices[:round(len(y)*ratio)]
+    indices_test = indices[round(len(y)*ratio):]
+    
+    return x[indices_train,:],y[indices_train],x[indices_test,:],y[indices_test]
+
+
 
 '''Project functions'''
 
