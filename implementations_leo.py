@@ -1,18 +1,18 @@
-import numpy as 
+import numpy as np
 
 '''support functions'''
 
 def cost_function(y, tx,w, lambda_=0):
     
     e = y - np.dot(tx,w)
-    rmse = np.sqrt(1/len(y)*np.dot(np.transpose(e),e) + 2*lambda_* np.linalg.norm(w)**2)
+    rmse = np.sqrt(1/y.shape[0]*np.dot(np.transpose(e),e) + 2*lambda_* np.linalg.norm(w)**2)
                    
     return rmse
 
 def compute_gradient(y, tx, w):
     
     e = y - np.dot(tx,w)
-    grad = -1/len(y)*np.dot(np.transpose(tx),np.sign(e))
+    grad = -1*np.dot(np.transpose(tx),np.sign(e))
     
     return grad
 
@@ -36,11 +36,12 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 
     return loss, w
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     w = initial_w
     
     for n_iter in range(max_iters):
-        y_batch, x_batch = split_data(tx, y, batch_size, n_iter)
+        index = np.random.randint(len(y))
+        y_batch, x_batch = y[index], tx[index,:]
         w -= gamma * compute_gradient(y_batch,x_batch,w)
         
     loss = cost_function(y,tx,w)
@@ -61,8 +62,8 @@ def least_squares(y, tx):
 
 #Ridge regression may have some problems but I cant find the error
 
-def ridge_regression(y, tx, lambda_):  
-    A = np.dot(np.transpose(tx),tx) - lambda_*(2*len(y))*np.identity(len(tx))
+def ridge_regression(y, tx, lambda_):
+    A = np.dot(np.transpose(tx),tx) + lambda_/(2*len(y))*np.identity(len(tx))
     try:
         inverse = np.linalg.inv(A)
     except np.linalg.linalg.LinAlgError as err:
