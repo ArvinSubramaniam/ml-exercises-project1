@@ -2,10 +2,10 @@ import numpy as np
 
 '''support functions'''
 
-def cost_function(y, tx,w, lambda_=0):
+def cost_function(y, tx,w):
     
     e = y - np.dot(tx,w)
-    rmse = np.sqrt(1/y.shape[0]*np.dot(np.transpose(e),e) + 2*lambda_* np.linalg.norm(w)**2)
+    rmse = np.sqrt(1/y.shape[0]*np.dot(np.transpose(e),e))
                    
     return rmse
 
@@ -67,12 +67,13 @@ def least_squares(y, tx):
 #Ridge regression may have some problems but I cant find the error
 
 def ridge_regression(y, tx, lambda_):
-    A = np.dot(np.transpose(tx),tx) + lambda_/(2*len(y))*np.identity(len(tx))
+    A = np.dot(tx,np.transpose(tx)) + lambda_*(2*len(y))*np.identity(len(y))
     try:
         inverse = np.linalg.inv(A)
     except np.linalg.linalg.LinAlgError as err:
         inverse = np.linalg.pinv(A)
         
-    w = np.dot(np.dot(inverse,np.transpose(tx)),y)
+    w = np.dot(y,np.dot(inverse,tx))
+    loss = cost_function(y,tx,w)
     
-    return cost_function(y,tx,w,lambda_), w
+    return loss, w
