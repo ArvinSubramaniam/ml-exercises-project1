@@ -42,16 +42,19 @@ def batch_data(y, x, batch_size, seed=1):
     np.random.shuffle(ids)
     return y[ids[:batch_size]], x[ids[:batch_size],:], y[ids[batch_size:]], x[ids[batch_size:],:]
 
-def build_poly(x, degree):
+def build_poly(x, degree, normalise=False):
+    """polynomial basis functions for input data x, for j=0 up to j=degree.
+    normalise = True first subtract the mean and divide for the sigma each column"""
     phi = np.ones((x.shape[0],x.shape[1] * degree + 1))
     
     # normalise values in x
-    for col in range(x.shape[1]):
-        x[:,col] = ((x[:,col]-np.mean(x[:,col]))/np.linalg.norm(x[:,col]))
     
     for col in range(x.shape[1]):
             for deg in range(degree):
                 phi[:,x.shape[1] *deg + col] = x[:,col]**(deg+1)
+    if normalise:
+        for col in range(phi.shape[1]):
+            phi[:,col] = (phi[:,col]-np.mean(phi[:,col]))/np.linalg.norm(phi[:,col])*len(phi[:,col])
     
     return phi
                
