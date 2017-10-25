@@ -118,6 +118,15 @@ def predict(y, x, w):
     correct = sum(np.sign(y_pred) == y)/len(y)
     return correct*100
 
+def standardize(x):
+    ''' Normalizes data by subtracting the mean and dividing by standard deviation.
+    Works for n-dimensional arrays
+    '''
+    centered_data = x - np.mean(x, axis=0)
+    std_data = centered_data / np.std(centered_data, axis=0)
+    
+    return std_data
+
 '''Plotting functions'''
 
 def semilog_loss_lambda_plot(loss, lambdas, seed, degree):

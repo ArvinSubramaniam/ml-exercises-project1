@@ -54,6 +54,10 @@ def build_poly(x, degree, normalise=False):
                 phi[:,x.shape[1] *deg + col] = x[:,col]**(deg+1)
     if normalise:
         for col in range(phi.shape[1]):
+            length = len(phi[:,col])
+            nonzeros = sum(phi[:,col] != 0)
+            mean = np.mean(phi[:,col])*length/nonzeros
+            norm = np.linalg.norm(phi[:,col])/nonzeros
             phi[:,col] = (phi[:,col]-np.mean(phi[:,col]))/np.linalg.norm(phi[:,col])*len(phi[:,col])
     
     return phi
